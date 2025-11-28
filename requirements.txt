@@ -23,4 +23,7 @@ streamlit>=1.30.0
 # Utilities
 python-dotenv>=1.0.0
 
+# PDF parsing via PyMuPDF (provides 'fitz')
+PyMuPDF>=1.23.9
+
 
