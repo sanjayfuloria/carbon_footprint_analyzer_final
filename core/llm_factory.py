@@ -1,14 +1,14 @@
 """LLM factory for different providers"""
 
 import os
-from .config import DEFAULT_ANTHROPIC_MODEL, DEFAULT_GROQ_MODEL
+from .config import DEFAULT_OPENAI_MODEL, DEFAULT_GROQ_MODEL
 
-def get_llm(provider: str = "anthropic", model: str = None, temperature: float = None, max_tokens: int = None):
+def get_llm(provider: str = "openai", model: str = None, temperature: float = None, max_tokens: int = None):
     """
-    Initialize LLM with choice between Groq and Anthropic
+    Initialize LLM with choice between Groq and OpenAI
     
     Args:
-        provider: "anthropic" or "groq"
+        provider: "openai" or "groq"
         model: Specific model name (optional)
         temperature: Temperature for generation (optional, defaults per provider)
         max_tokens: Maximum tokens for generation (optional, defaults per provider)
@@ -29,18 +29,18 @@ def get_llm(provider: str = "anthropic", model: str = None, temperature: float =
             groq_api_key=os.getenv("GROQ_API_KEY")
         )
     
-    elif provider.lower() == "anthropic":
-        from langchain_anthropic import ChatAnthropic
+    elif provider.lower() == "openai":
+        from langchain_openai import ChatOpenAI
         
         if not model:
-            model = DEFAULT_ANTHROPIC_MODEL
+            model = DEFAULT_OPENAI_MODEL
         
-        return ChatAnthropic(
+        return ChatOpenAI(
             model=model,
             temperature=temperature if temperature is not None else 0.1,
             max_tokens=max_tokens if max_tokens is not None else 4096,
-            anthropic_api_key=os.getenv("ANTHROPIC_API_KEY")
+            api_key=os.getenv("OPENAI_API_KEY")
         )
     
     else:
-        raise ValueError(f"Unsupported provider: {provider}. Choose 'anthropic' or 'groq'")
+        raise ValueError(f"Unsupported provider: {provider}. Choose 'openai' or 'groq'")

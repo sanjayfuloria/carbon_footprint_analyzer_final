@@ -29,7 +29,7 @@ Analyze your spending patterns and estimate carbon emissions with privacy-first 
 │  │  Node 5  │    │   Node 6     │    │   Node 7    │    │   Node 8     │   │
 │  └──────────┘    └──────────────┘    └─────────────┘    └──────┬───────┘   │
 │       │                │                    │                   │           │
-│   Pattern          Anthropic/          Emission            Category &       │
+│   Pattern          OpenAI/             Emission            Category &       │
 │   Matching         Groq LLM            Factors             Monthly Totals   │
 │                                                                 │           │
 │                                                                 ▼           │
@@ -49,15 +49,15 @@ Analyze your spending patterns and estimate carbon emissions with privacy-first 
 
 ## 🎯 Key Features
 
-| Feature | Description |
-|---------|-------------|
-| 🔒 **Privacy-First** | PII redaction (mobile numbers, UPI IDs, account numbers) before LLM processing |
+| Feature                     | Description                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| 🔒 **Privacy-First**        | PII redaction (mobile numbers, UPI IDs, account numbers) before LLM processing             |
 | 💰 **High-Value Filtering** | Excludes transactions ≥₹50,000 from spend-based analysis (needs activity-based estimation) |
-| ⚡ **Hybrid Efficiency** | Rule-based (80%) + LLM (20%) categorization for speed and cost |
-| 🇮🇳 **India-Specific** | Emission factors from NSSO studies, supports all major Indian banks |
-| 📊 **Min/Max Ranges** | Accounts for lifestyle variations (diet, energy sources, etc.) |
-| 📈 **Timeline Analysis** | Weekly carbon footprint trends with urban India baseline comparison |
-| 🤖 **Multi-LLM** | Supports Anthropic Claude and Groq Llama models |
+| ⚡ **Hybrid Efficiency**    | Rule-based (80%) + LLM (20%) categorization for speed and cost                             |
+| 🇮🇳 **India-Specific**       | Emission factors from NSSO studies, supports all major Indian banks                        |
+| 📊 **Min/Max Ranges**       | Accounts for lifestyle variations (diet, energy sources, etc.)                             |
+| 📈 **Timeline Analysis**    | Weekly carbon footprint trends with urban India baseline comparison                        |
+| 🤖 **Multi-LLM**            | Supports OpenAI GPT and Groq Llama models                                                  |
 
 ---
 
@@ -97,12 +97,12 @@ carbon_footprint_langgraph/
 
 ### Why Exclude High-Value Transactions?
 
-| Transaction Type | Spend-Based Issue | Recommended Approach |
-|------------------|-------------------|---------------------|
-| 💻 Electronics (₹50K laptop) | Price ≠ Carbon footprint | Activity-based: ~300-400 kg CO2e |
-| ✈️ International flights | Ticket price varies by booking time | Activity-based: Distance × emission factor |
-| 🏠 Property/Vehicles | Lifecycle emissions unrelated to price | Activity-based: Product-specific factors |
-| 💰 Investments/Insurance | No direct carbon emissions | Exclude from carbon analysis |
+| Transaction Type             | Spend-Based Issue                      | Recommended Approach                       |
+| ---------------------------- | -------------------------------------- | ------------------------------------------ |
+| 💻 Electronics (₹50K laptop) | Price ≠ Carbon footprint               | Activity-based: ~300-400 kg CO2e           |
+| ✈️ International flights     | Ticket price varies by booking time    | Activity-based: Distance × emission factor |
+| 🏠 Property/Vehicles         | Lifecycle emissions unrelated to price | Activity-based: Product-specific factors   |
+| 💰 Investments/Insurance     | No direct carbon emissions             | Exclude from carbon analysis               |
 
 ### How It Works
 
@@ -127,11 +127,11 @@ carbon_footprint_langgraph/
 
 ### Reference Context
 
-| Benchmark | Weekly CO2e | Annual CO2e | Source |
-|-----------|-------------|-------------|---------|
-| **Urban India Average** | ~8.5 kg | ~450 kg | NSSO consumption studies |
-| **National India Average** | ~4.6 kg | ~240 kg | Per capita emissions data |
-| **Global Average** | ~9.6 kg | ~500 kg | World Bank data |
+| Benchmark                  | Weekly CO2e | Annual CO2e | Source                    |
+| -------------------------- | ----------- | ----------- | ------------------------- |
+| **Urban India Average**    | ~8.5 kg     | ~450 kg     | NSSO consumption studies  |
+| **National India Average** | ~4.6 kg     | ~240 kg     | Per capita emissions data |
+| **Global Average**         | ~9.6 kg     | ~500 kg     | World Bank data           |
 
 ---
 
@@ -197,7 +197,7 @@ pip install -r requirements.txt
 
 # Configure API keys
 cp .env.example .env
-# Edit .env and add your GROQ_API_KEY and/or ANTHROPIC_API_KEY
+# Edit .env and add your GROQ_API_KEY and/or OPENAI_API_KEY
 ```
 
 ### 2. Run the Application
@@ -237,10 +237,10 @@ graph LR
     H --> I[Node 8: Aggregate]
     I --> J[Node 9: Generate Insights]
     J --> K[Timeline Charts & Results]
-    
+
     E --> L[High-Value Transactions]
     L --> M[Activity-Based Recommendation]
-    
+
     style E fill:#ffeb3b
     style L fill:#ff5722
     style M fill:#ff5722
@@ -248,17 +248,17 @@ graph LR
 
 ### Detailed Node Descriptions (Updated)
 
-| Node | Input | Processing | Output |
-|------|-------|------------|--------|
-| **1. PDF Parser** | PDF file | PyMuPDF text extraction | Raw text |
-| **2. Transaction Extractor** | Raw text | Groq LLM parsing | Structured transactions |
-| **3. PII Redactor** | Transactions | Regex pattern matching | Redacted transactions |
-| **4. High-Value Filter** | Redacted txns | ≥₹50K threshold check | Regular + high-value splits |
-| **5. Rule Categorizer** | Regular txns | 200+ merchant patterns | Categorized (80%) |
-| **6. LLM Categorizer** | Uncategorized | AI classification | Fully categorized |
-| **7. Carbon Estimator** | Categories | Emission factors × amount | CO2e estimates |
-| **8. Aggregator** | Estimates | Sum by category/month/week | Totals & breakdowns |
-| **9. Insights Generator** | Aggregated | AI analysis + timeline | Recommendations |
+| Node                         | Input         | Processing                 | Output                      |
+| ---------------------------- | ------------- | -------------------------- | --------------------------- |
+| **1. PDF Parser**            | PDF file      | PyMuPDF text extraction    | Raw text                    |
+| **2. Transaction Extractor** | Raw text      | Groq LLM parsing           | Structured transactions     |
+| **3. PII Redactor**          | Transactions  | Regex pattern matching     | Redacted transactions       |
+| **4. High-Value Filter**     | Redacted txns | ≥₹50K threshold check      | Regular + high-value splits |
+| **5. Rule Categorizer**      | Regular txns  | 200+ merchant patterns     | Categorized (80%)           |
+| **6. LLM Categorizer**       | Uncategorized | AI classification          | Fully categorized           |
+| **7. Carbon Estimator**      | Categories    | Emission factors × amount  | CO2e estimates              |
+| **8. Aggregator**            | Estimates     | Sum by category/month/week | Totals & breakdowns         |
+| **9. Insights Generator**    | Aggregated    | AI analysis + timeline     | Recommendations             |
 
 ---
 
@@ -267,6 +267,7 @@ graph LR
 ### PII Redaction (DPDP Act 2023)
 
 The system automatically redacts:
+
 - 📱 Mobile numbers (10-digit patterns)
 - 💳 UPI IDs (name@bank patterns)
 - 🏦 Account numbers (8-18 digit patterns)
@@ -325,14 +326,14 @@ EMISSION_FACTORS = {
 
 - Python 3.10+
 - Groq API key (required for transaction extraction)
-- Anthropic API key (optional, for categorization)
+- OpenAI API key (required for categorization)
 
 ### Key Dependencies
 
 ```
 langchain>=0.3.0
 langgraph>=0.2.0
-langchain-anthropic>=0.3.0
+langchain-openai>=0.2.0
 langchain-groq>=0.2.0
 streamlit>=1.40.0
 pymupdf>=1.24.0
@@ -361,7 +362,7 @@ MIT License - see LICENSE file for details.
 ## 🙏 Acknowledgments
 
 - **LangGraph** - Workflow orchestration
-- **Anthropic & Groq** - LLM providers
+- **OpenAI & Groq** - LLM providers
 - **NSSO** - Emission factor data
 - **Indian Banking Standards** - Statement formats
 - **Urban India Carbon Studies** - Baseline benchmarking data
@@ -373,4 +374,3 @@ MIT License - see LICENSE file for details.
 ```bash
 streamlit run streamlit_app.py
 ```
-

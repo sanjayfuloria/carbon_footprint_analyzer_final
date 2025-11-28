@@ -43,16 +43,22 @@ st.markdown("""
         text-align: center;
     }
     .insight-box {
-        background-color: #e3f2fd;
+        background-color: #ffffff;
+        color: #1a1a1a;
         padding: 1rem;
-        border-radius: 0.5rem;
+        border-radius: 8px;
         margin: 0.5rem 0;
+        border: 1px solid #cfd8dc;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .recommendation-box {
-        background-color: #e8f5e9;
+        background-color: #fffef6;
+        color: #1a1a1a;
         padding: 1rem;
-        border-radius: 0.5rem;
+        border-radius: 8px;
         margin: 0.5rem 0;
+        border: 1px solid #ffe0b2;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .range-indicator {
         font-size: 0.8rem;
@@ -77,22 +83,23 @@ st.sidebar.header("⚙️ Configuration")
 # LLM Provider Selection
 llm_provider = st.sidebar.selectbox(
     "🤖 LLM Provider",
-    options=["anthropic", "groq"],
+    options=["openai", "groq"],
     index=0,
-    help="Choose between Anthropic Claude or Groq models"
+    help="Choose between OpenAI GPT or Groq models"
 )
 
 # Model Selection based on provider
-if llm_provider == "anthropic":
+if llm_provider == "openai":
     llm_model = st.sidebar.selectbox(
         "🧠 Model",
         options=[
-            "claude-3-5-sonnet-20241022",
-            "claude-3-haiku-20240307",
-            "claude-3-opus-20240229"
+            "gpt-4o",
+            "gpt-4o-mini",
+            "gpt-4-turbo",
+            "gpt-3.5-turbo"
         ],
         index=0,
-        help="Claude models - Sonnet is recommended for best balance"
+        help="OpenAI models - GPT-4o is recommended for best balance"
     )
 elif llm_provider == "groq":
     llm_model = st.sidebar.selectbox(
@@ -113,9 +120,9 @@ elif llm_provider == "groq":
     )
 
 # Show API key requirements
-if llm_provider == "anthropic":
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        st.sidebar.error("⚠️ ANTHROPIC_API_KEY not found in environment")
+if llm_provider == "openai":
+    if not os.getenv("OPENAI_API_KEY"):
+        st.sidebar.error("⚠️ OPENAI_API_KEY not found in environment")
 elif llm_provider == "groq":
     if not os.getenv("GROQ_API_KEY"):
         st.sidebar.error("⚠️ GROQ_API_KEY not found in environment")
@@ -148,8 +155,8 @@ analyze_button = st.sidebar.button("🔍 Analyze Carbon Footprint", type="primar
 # Main content
 if analyze_button:
     # Check API key
-    if llm_provider == "anthropic" and not os.getenv("ANTHROPIC_API_KEY"):
-        st.error("❌ Please set ANTHROPIC_API_KEY in your .env file")
+    if llm_provider == "openai" and not os.getenv("OPENAI_API_KEY"):
+        st.error("❌ Please set OPENAI_API_KEY in your .env file")
         st.stop()
     elif llm_provider == "groq" and not os.getenv("GROQ_API_KEY"):
         st.error("❌ Please set GROQ_API_KEY in your .env file")

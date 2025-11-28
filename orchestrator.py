@@ -59,14 +59,14 @@ def create_carbon_footprint_graph() -> StateGraph:
     return workflow
 
 def run_carbon_analysis(pdf_path: str = None, password: str = None, 
-                       llm_provider: str = "anthropic", llm_model: str = None) -> dict:
+                       llm_provider: str = "openai", llm_model: str = None) -> dict:
     """
     🚀 Main entry point to run carbon footprint analysis
     
     Args:
         pdf_path: Path to PDF bank statement (optional)
         password: PDF password if required (optional)
-        llm_provider: "anthropic" or "groq" (default: "anthropic")
+        llm_provider: "openai" or "groq" (default: "openai")
         llm_model: Specific model name (optional)
     
     Returns:

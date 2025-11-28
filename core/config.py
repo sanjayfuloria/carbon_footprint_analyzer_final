@@ -17,5 +17,5 @@ def get_langsmith_config():
     }
 
 # Default models
-DEFAULT_ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022"
+DEFAULT_OPENAI_MODEL = "gpt-4o"
 DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile"

@@ -22,13 +22,27 @@ def extract_transactions_node(state: GraphState) -> GraphState:
         ]
         return state
     
-    # Always use Groq for transaction extraction
+    # Use OpenAI for transaction extraction (better for large PDFs)
     llm = get_llm(
-        provider="groq",
-        model="llama-3.3-70b-versatile",
+        provider="openai",
+        model="gpt-4o-mini",  # Cost-effective for extraction
         temperature=0,  # Make output more deterministic
-        max_tokens=8000  # Increase from default to handle long statements
+        max_tokens=16000  # OpenAI has higher limits
     )
+    
+    # OpenAI can handle larger texts, but still truncate if extremely large
+    raw_text = state["raw_text"]
+    MAX_CHARS = 100000  # OpenAI can handle much more
+    
+    if len(raw_text) > MAX_CHARS:
+        print(f"\n⚠️  PDF text too large ({len(raw_text)} chars). Truncating to {MAX_CHARS} chars...")
+        # Try to keep the middle section (where most transactions are)
+        # Skip first 2000 chars (headers) and take the next MAX_CHARS
+        start_pos = min(2000, len(raw_text) // 10)
+        raw_text = raw_text[start_pos:start_pos + MAX_CHARS]
+        print(f"✓ Truncated to {len(raw_text)} characters")
+    else:
+        print(f"✓ PDF text size OK: {len(raw_text)} characters")
     
     # Universal bank statement extraction prompt
     prompt = ChatPromptTemplate.from_messages([
@@ -84,10 +98,10 @@ Return format:
         chain = prompt | llm
         
         result = chain.invoke(
-            {"statement_text": state["raw_text"]},
+            {"statement_text": raw_text},  # Use truncated text
             config={
-                "run_name": "extract_transactions_groq", 
-                "tags": ["extraction", "groq", "llama-3.3-70b"]
+                "run_name": "extract_transactions_openai", 
+                "tags": ["extraction", "openai", "gpt-4o-mini"]
             }
         )
         
@@ -119,10 +133,34 @@ Return format:
             print("✗ Bracket matching failed")
         # Strategy 2: Find JSON in code blocks (```json ... ```)
         if not json_str:
+            # Try to capture bracketed array inside code block
             code_block_match = re.search(r'```(?:json)?\s*\n?(\[.*?\])\s*```', response_text, re.DOTALL)
             if code_block_match:
                 json_str = code_block_match.group(1)
                 print("Found JSON in code block")
+            else:
+                # If code block exists but missing closing bracket, try capturing from first '[' inside block
+                code_block_loose = re.search(r'```(?:json)?\s*\n?(\[.*)```', response_text, re.DOTALL)
+                if code_block_loose:
+                    json_str = code_block_loose.group(1)
+                    print("Found partial JSON array in code block; will attempt to repair")
+        
+        # Strategy 3: Extract individual JSON objects and wrap into an array
+        if not json_str:
+            print("Attempting object-wise extraction as fallback...")
+            objects = re.findall(r'\{[\s\S]*?\}', response_text)
+            if objects:
+                # Heuristic: filter out obviously non-transaction objects lacking required fields
+                required_fields = ['date', 'description', 'amount', 'type']
+                filtered = []
+                for obj in objects:
+                    # Quick field check without full parse
+                    field_hits = sum(1 for f in required_fields if f in obj)
+                    if field_hits >= 3:  # keep likely transaction objects
+                        filtered.append(obj)
+                if filtered:
+                    json_str = '[' + ',\n'.join(filtered) + ']'
+                    print(f"Wrapped {len(filtered)} object(s) into JSON array from fallback")
         
         if not json_str:
             # Save full response for debugging
@@ -130,6 +168,18 @@ Return format:
                 f.write(response_text)
             raise ValueError(f"LLM response did not contain valid JSON array. Response saved to llm_response_debug.txt. Preview: {response_text[:200]}")
         
+        # Attempt to repair partial arrays: balance brackets by appending if missing
+        open_sq = json_str.count('[')
+        close_sq = json_str.count(']')
+        if open_sq > close_sq:
+            json_str = json_str + (']' * (open_sq - close_sq))
+            print("Repaired missing closing square bracket(s)")
+        open_curly = json_str.count('{')
+        close_curly = json_str.count('}')
+        if open_curly > close_curly:
+            json_str = json_str + ('}' * (open_curly - close_curly))
+            print("Repaired missing closing curly brace(s)")
+
         # Clean up the JSON string
         # Remove any trailing commas before closing brackets
         json_str = re.sub(r',\s*\]', ']', json_str)
@@ -183,11 +233,11 @@ Return format:
                         txn[field] = ''
         
         state["transactions"] = transactions
-        state["extraction_method"] = "groq_llm"
+        state["extraction_method"] = "openai_llm"
         state["processing_status"] = "llm_extracted"
         
         state["messages"] = state.get("messages", []) + [
-            AIMessage(content=f"✅ Extracted {len(transactions)} transactions from PDF using Groq LLM")
+            AIMessage(content=f"✅ Extracted {len(transactions)} transactions from PDF using OpenAI GPT-4o-mini")
         ]
             
     except json.JSONDecodeError as e:
