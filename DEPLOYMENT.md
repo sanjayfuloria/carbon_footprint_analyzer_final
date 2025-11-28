@@ -18,7 +18,7 @@ This guide shows you how to host your Carbon Footprint Analyzer on GitHub and de
 
 Your repository is already connected to GitHub:
 ```
-https://github.com/Suryam1976/carbon_footprint_langgraph
+https://github.com/sanjayfuloria/carbon_footprint_analyzer_final
 ```
 
 ### Files Added for Deployment
@@ -64,7 +64,7 @@ git push origin main
 
 1. Click **"New app"** button
 2. Fill in the deployment form:
-   - **Repository:** `Suryam1976/carbon_footprint_langgraph`
+   - **Repository:** `sanjayfuloria/carbon_footprint_analyzer_final`
    - **Branch:** `main`
    - **Main file path:** `streamlit_app.py`
    - **App URL:** Choose a custom subdomain (e.g., `carbon-footprint-analyzer`)
@@ -256,7 +256,7 @@ Streamlit Cloud Pro ($20/month) allows custom domains:
 
 - **Streamlit Docs:** [docs.streamlit.io](https://docs.streamlit.io/)
 - **Streamlit Forum:** [discuss.streamlit.io](https://discuss.streamlit.io/)
-- **GitHub Issues:** [Your repo issues](https://github.com/Suryam1976/carbon_footprint_langgraph/issues)
+- **GitHub Issues:** [Your repo issues](https://github.com/sanjayfuloria/carbon_footprint_analyzer_final/issues)
 
 ---
 
